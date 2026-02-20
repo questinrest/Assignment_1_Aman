@@ -4,18 +4,15 @@ from src.config import (
     OPENAI_MODEL_GROQ,
     TEMPERATURE,
     MAX_TOKENS,
-    MAX_RETRIES,
     GROQ_API_KEY
 )
-
 
 
 llm = ChatGroq(
     model=OPENAI_MODEL_GROQ,
     api_key=GROQ_API_KEY,
     temperature=TEMPERATURE,
-    max_tokens=MAX_TOKENS,
-    max_retries=MAX_RETRIES
+    max_tokens=MAX_TOKENS
 )
 
 
@@ -35,8 +32,8 @@ def context_build(retrieved_chunks: List[Dict]):
     return "\n\n".join(l)
 
 
-SYSTEM_PROMPT = """You are a helpful assistant that answers questions based on the provided context.
-Use ONLY the context below to answer. If the answer is not in the context, say "I don't have enough information to answer that."
+SYSTEM_PROMPT = """You are a helpful assistant that excels in answering questions based on the given context.
+You always use the context below to answer. If the answer is not in the context, say "I don't have enough information to answer that."
 
 CITATION RULES:
 - Each context chunk is labeled [1], [2], etc. with its source document and page number(s).
@@ -44,23 +41,21 @@ CITATION RULES:
 - At the end of your answer, add a "References" section listing each cited source with page numbers.
 - Format: [n] source_filename, p.X
 
-Example: The offer letter must be accepted within ten days of issuance [1], and it remains valid for three months [2]. Selected candidates are required to undergo a pre-employment medical check-up at the designated lab [3], and employment may be terminated without notice if false information is discovered later [4].
+Example: The offer letter must be accepted within ten days of issuance [1], and it remains valid for three months [2].
 
 References:
 [1] HR Handbook 2025 for website.pdf, p.10
-[2] HR Handbook 2025 for website.pdf, p.10
-[3] HR Handbook 2025 for website.pdf, p.10
-[4] HR Handbook 2025 for website.pdf, p.10"""
+[2] HR Handbook 2025 for website.pdf, p.11"""
+
 
 
 
 def generate_answer(query: str, chunks: List[Dict]) -> str:
     context = context_build(chunks)
-
     messages = [
         ("system", SYSTEM_PROMPT),
         ("human", f"Context:\n{context}\n\n---\nQuestion: {query}"),
     ]
 
-    ai_msg = llm.invoke(messages)
-    return ai_msg.content
+    model_response = llm.invoke(messages)
+    return model_response.content

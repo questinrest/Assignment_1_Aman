@@ -26,13 +26,13 @@ PINECONE_CLOUD : str = "aws"
 PINECONE_REGION : str = "us-east-1"
 PINECONE_EMBEDDING_MODEL : str = "llama-text-embed-v2"
 PINECONE_RERANKER_MODEL : str = "bge-reranker-v2-m3"
+PINECONE_NAMESPACE : str = ""
 
 
 ## LLM params
 OPENAI_MODEL_GROQ : str = "openai/gpt-oss-120b"
 TEMPERATURE : float = 0.0
 MAX_TOKENS : int = None
-MAX_RETRIES : int = 2
 
 
 

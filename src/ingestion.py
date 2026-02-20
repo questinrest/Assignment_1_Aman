@@ -1,5 +1,8 @@
 import os
 import re
+import datetime
+import pandas as pd
+import hashlib
 import pymupdf
 from typing import List, Dict
 from pathlib import Path
@@ -7,12 +10,25 @@ from src.config import (
     CHUNK_SIZE,
     CHUNK_OVERLAP
 )
+from src.utils import is_index_exists
+
+# computing hash value of a file
+def compute_file_hash(file_path, algorithm='sha256'):
+    hash_func = hashlib.new(algorithm)
+    
+    with open(file_path, 'rb') as file:
+        while chunk := file.read(8192):
+            hash_func.update(chunk)
+    return hash_func.hexdigest()
+
 
 
 ## basic preprocesing
 
 def preprocess_text(text:str) -> str:
     return re.sub(r'[.…]{2,}|\s+', " ", text)
+
+    
 
 
 ## load pdf
@@ -34,7 +50,7 @@ def load_pdf(file_path : str) -> List[Dict]:
             )
     return pages
 
-# chunk page wise
+# chunk page wise, with chunk size and overlap
 def chunk_page(file_path : str, chunk_size : int = CHUNK_SIZE, overlap : int = CHUNK_OVERLAP) -> List[Dict]:
     doc = load_pdf(file_path=file_path)
     
@@ -67,25 +83,33 @@ def chunk_page(file_path : str, chunk_size : int = CHUNK_SIZE, overlap : int = C
     return chunks
 
 ## preparing the chunks with more metadata for upsert
-def ingest(file_path : str) -> List[Dict]:
+def ingest(file_path: str) -> List[Dict]:
     file_name = Path(file_path).name
-    chunks = chunk_page(file_path=file_path)
 
+    # if is_ingested(file_path=file_path): ## commented out, as not using this approach
+    #     return 0 ## reason given in hash.ipynb
+    hash_val = compute_file_hash(file_path=file_path)
+    
+
+    chunks = chunk_page(file_path=file_path)
     ready_to_embed_chunks = []
 
     for idx, chunk in enumerate(chunks):
         page_no = ",".join(str(p) for p in chunk['page_no'])
         ready_to_embed_chunks.append(
             {
-                "id" : f"chunk-{idx}-{file_name}",
-                "page_no" : page_no,
-                "source" : file_name,
-                "chunk_text" : chunk['chunk_text'] 
-
+                "id": f"chunk-{idx}-{file_name}",
+                "page_no": page_no,
+                "source": file_name,
+                "chunk_text": chunk['chunk_text'],
+                "source_hash_value" : hash_val
             }
         )
-    
+
     return ready_to_embed_chunks
+
+
+
 
 
 

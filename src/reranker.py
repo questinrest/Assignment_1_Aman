@@ -1,13 +1,13 @@
 from pinecone import Pinecone
-from src.config import PINECONE_API_KEY, PINECONE_INDEX_NAME, PINECONE_RERANKER_MODEL, TOP_K, TOP_N
+from src.config import PINECONE_API_KEY, PINECONE_INDEX_NAME, PINECONE_RERANKER_MODEL, TOP_K, TOP_N, PINECONE_NAMESPACE
 from typing import List, Dict
 
 
 pc = Pinecone(api_key=PINECONE_API_KEY)
 
-def search_vector_db_reranker(index_name : str = PINECONE_INDEX_NAME,
-                            namespace : str = "example-namespace",
-                            query : str = "What is a work cycle?",
+def search_vector_db_reranker(namespace : str,
+                            query : str,
+                            index_name : str = PINECONE_INDEX_NAME,
                             rerank_model : str = PINECONE_RERANKER_MODEL,
                             top_k : int = TOP_K,
                             top_n : int = TOP_N) -> List[Dict]:

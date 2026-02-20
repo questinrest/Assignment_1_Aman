@@ -14,7 +14,7 @@ pc = Pinecone(
     api_key= PINECONE_API_KEY
 )
 
-## have to add namespace ability
+## checking if the index is created or not
 
 def get_or_create_index(PINECONE_IND : str = PINECONE_INDEX_NAME,
                           cloud : str = PINECONE_CLOUD,
@@ -36,10 +36,26 @@ def get_or_create_index(PINECONE_IND : str = PINECONE_INDEX_NAME,
     return pc.Index(PINECONE_INDEX_NAME)
 
 
+def duplicate_exists_(namespace: str, source_hash: str) -> bool:
+    index = get_or_create_index()
+
+    response = index.search(
+        namespace=namespace,
+        query={
+            "inputs": {
+                "text": "checking"
+            },
+            "top_k": 1,
+            "filter": {
+                "source_hash_value": {"$eq": source_hash}
+            }
+        }
+    )
+    return len(response.result.hits) > 0
 
 
-## have to add namespace -- here in this now
-def upsert_chunks(chunks: List[Dict], index_name: str = PINECONE_INDEX_NAME, batch_size : int = BATCH_SIZE):
+## added with namspace
+def upsert_chunks(chunks: List[Dict],namespace : str ,index_name: str = PINECONE_INDEX_NAME, batch_size : int = BATCH_SIZE):
     index = get_or_create_index(index_name)
 
     records = []
@@ -49,16 +65,14 @@ def upsert_chunks(chunks: List[Dict], index_name: str = PINECONE_INDEX_NAME, bat
             "_id": chunk["id"],
             "chunk_text": chunk["chunk_text"],
             "source": chunk["source"],
-            "page_no": chunk["page_no"]
+            "page_no": chunk["page_no"],
+            "source_hash_value" : chunk['source_hash_value']
         })
 
     for i in range(0, len(records), batch_size):
         batch = records[i:i+batch_size]
-        index.upsert_records("example-namespace", records=batch)
+        index.upsert_records(namespace=namespace, records=batch)
 
-    print(f"All chunks upserted to {index_name} and namespace.")
+    print(f"All chunks upserted to {index_name} and {namespace} namespace.")
     return len(records)
-
-
-
 

@@ -1,15 +1,15 @@
 from pinecone import Pinecone
-from src.config import PINECONE_API_KEY, PINECONE_INDEX_NAME, TOP_K
+from src.config import PINECONE_API_KEY, PINECONE_INDEX_NAME, TOP_K, PINECONE_NAMESPACE
 from typing import List, Dict
 
 
 
 pc = Pinecone(api_key=PINECONE_API_KEY)
 
-def search_vector_db(index_name : str = PINECONE_INDEX_NAME,
-                    namespace : str = "example-namespace",
-                    top_k : int = TOP_K, 
-                    query : str = "Explain about Promotion, Upgradation, And Career Progression Process") -> List[Dict]:
+def search_vector_db(namespace : str,
+                    query : str = "Explain about Promotion, Upgradation, And Career Progression Process",
+                    index_name : str = PINECONE_INDEX_NAME,
+                    top_k : int = TOP_K) -> List[Dict]:
     
     index = pc.Index(index_name)
 
