@@ -38,7 +38,7 @@ The pipeline uses:
 
 ## Environment configuration
 
-Create a `.env` file in the project root (same directory as `src/`) with the following variables:
+Create a `.env` file in the project root (same directory as `code/`) with the following variables:
 
 ```dotenv
 PINECONE_API_KEY=<your‑pinecone‑api‑key>
@@ -52,38 +52,34 @@ GROQ_API_KEY=<your‑groq‑api‑key>
 The FastAPI application lives in `src/api.py`. To start the server locally:
 
 ```bash
+cd code
 uvicorn src.api:app --reload
 ```
 
 - The server will be available at `http://127.0.0.1:8000`.
 - Swagger UI can be accessed at `http://127.0.0.1:8000/docs` for interactive testing.
 
-## Using the endpoints
+## Using the endpoints (interactive docs)
 
-### 1. Ingest a document
+### 1. Ingesting document
 
+- enter namespace (create new or enter already created namespace)
 ```bash
-curl -X POST "http://127.0.0.1:8000/ingest" \
-  -H "Content-Type: application/json" \
-  -d '{"file_path": "path/to/your/document.pdf"}'
+{
+  "file_path": "file_path" (use // in case of windows)
+}
 ```
 
-- The request body must contain `file_path` pointing to a PDF on the server's filesystem.
-- The response includes the number of chunks up‑serted and a status message.
-
-### 2. Query the knowledge base
-
+### 2. Querying 
+- enter the namespace (from which you want to query)
 ```bash
-curl -X POST "http://127.0.0.1:8000/query" \
-  -H "Content-Type: application/json" \
-  -d '{
-        "query": "Your question here",
-        "rerank": true
-      }'
+{
+  "query": "your_query_here",
+  "rerank": true
+}
 ```
 
-- Set `rerank` to `true` to use the reranking model (`bge‑reranker‑v2‑m3`).
-- The response contains `answer`, `reference` (source documents), and the `rerank` flag.
+
 
 ## Project structure (Core Source Code)
 
