@@ -4,7 +4,7 @@
 
 ---
 
-## 🚀 What This Project Does (In Plain English)
+## 🚀 What This Project Does
 
 Imagine uploading your company's 200-page policy manual and then simply asking *"What is the leave encashment policy?"* — and getting a precise, cited answer back in seconds.
 
@@ -99,11 +99,9 @@ graph TD
 
 - **Async ingestion queue** — Offload chunking and embedding to Celery/RabbitMQ workers so large multi-document uploads don't block the API thread.
 - **Hybrid search (BM25 + dense)** — Combine keyword search with vector search for documents that contain exact codes, IDs, or jargon that semantic search may miss.
-- **Intent-based query routing** — A lightweight classifier to route different query types (factual, comparative, summarisation) to specialized prompt templates.
-- **Streaming responses** — Use OpenAI's streaming API to begin delivering the answer token-by-token, reducing perceived latency for end-users.
 - **Document versioning** — Track when a document is updated so the system can replace stale vectors rather than requiring a manual re-ingest.
-- **Evaluation harness** — Integrate `ragas` or a custom eval loop to measure faithfulness, answer relevancy, and context precision automatically on every code change.
-- **Multi-modal support** — Extend ingestion to handle tables, diagrams, and scanned PDFs via OCR (e.g., `pytesseract`).
+- **Evaluation** — Integrate `ragas` or a custom eval loop to measure faithfulness, answer relevancy, and context precision automatically on every code change.
+- **Multi-modal support** — Extend ingestion to handle tables, diagrams, and scanned PDFs.
 
 ---
 
@@ -111,14 +109,14 @@ graph TD
 
 | Layer | Technology |
 |---|---|
-| **API Framework** | FastAPI (Python 3.11+) |
-| **Vector Database** | Pinecone |
-| **Embedding Model** | `llama-text-embed-v2` (via Pinecone) |
-| **Reranker** | Pinecone Native Reranker |
-| **LLM** | `openai/gpt-oss-120b` |
-| **PDF Processing** | PyMuPDF (`fitz`) |
-| **Config Management** | Pydantic Settings |
-| **Deduplication** | SHA-256 (Python `hashlib`) |
+| **API Framework** | ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white) ![Python](https://img.shields.io/badge/Python_3.11+-3776AB?style=flat&logo=python&logoColor=white) |
+| **Vector Database** | ![Pinecone](https://img.shields.io/badge/Pinecone-000000?style=flat&logo=pinecone&logoColor=white) |
+| **Embedding Model** | ![Meta](https://img.shields.io/badge/llama--text--embed--v2-0467DF?style=flat&logo=meta&logoColor=white) |
+| **Reranker** | ![Pinecone](https://img.shields.io/badge/Pinecone_Reranker-000000?style=flat&logo=pinecone&logoColor=white) |
+| **LLM** | ![OpenAI](https://img.shields.io/badge/openai%2Fgpt--oss--120b-412991?style=flat&logo=openai&logoColor=white) |
+| **PDF Processing** | ![PyMuPDF](https://img.shields.io/badge/PyMuPDF_(fitz)-EE4C2C?style=flat&logo=adobeacrobatreader&logoColor=white) |
+| **Config Management** | ![Pydantic](https://img.shields.io/badge/Pydantic_Settings-E92063?style=flat&logo=pydantic&logoColor=white) |
+| **Deduplication** | ![Python](https://img.shields.io/badge/SHA--256_hashlib-3776AB?style=flat&logo=python&logoColor=white) |
 
 ---
 
